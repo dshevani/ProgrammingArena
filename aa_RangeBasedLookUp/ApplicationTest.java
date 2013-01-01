@@ -6,10 +6,6 @@ package aa_RangeBasedLookUp;
 
 import java.io.PrintWriter;
 
-/**
- *
- * @author shevanid
- */
 public class ApplicationTest {
     public static void main (String [] args) {
 	Application book = new Application("AddressBook");
@@ -26,8 +22,8 @@ public class ApplicationTest {
 	    output.println("A DuplicateException was thrown and caught!");
 	}
 	output.println("List in print range:");
-	//book.display(output);
-        //book.display("Bob", output);
+	book.display(output);
+        book.display("Bob", output);
         book.display("Bob", "Jockey", output);
 	output.close();
     }

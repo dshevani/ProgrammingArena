@@ -7,10 +7,6 @@ package aa_RangeBasedLookUp;
 import java.lang.Comparable;
 import java.io.PrintWriter;
 
-/**
- *
- * @author shevanid
- */
 public interface Dictionary<K extends Comparable<? super K>,M> {
     
     public Entry<K,M> lookup(K item);

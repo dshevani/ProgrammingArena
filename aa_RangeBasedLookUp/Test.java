@@ -4,11 +4,9 @@
  */
 package aa_RangeBasedLookUp;
 
-/**
- *
- * @author shevanid
- */
 import java.io.*;
+
+// Test class for BST class
 
 public class Test {
     public static void main (String [] args) throws IOException {

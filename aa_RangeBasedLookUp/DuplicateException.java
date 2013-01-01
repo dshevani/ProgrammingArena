@@ -4,10 +4,6 @@
  */
 package aa_RangeBasedLookUp;
 
-/**
- *
- * @author shevanid
- */
 public class DuplicateException extends Exception {
     
     public DuplicateException() {

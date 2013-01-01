@@ -7,23 +7,27 @@ package aa_RangeBasedLookUp;
 import java.lang.Comparable;
 
 /**
+ * This class serves as generic Entry class
  * 
- * @author shevanid
+ * @author dshevani
+ * @param <K> Key
+ * @param <M> Value
  */
+
 public class Entry<K extends Comparable<? super K>,M> implements Comparable<Entry<K,M>>{
     
     K key;
     M value;
     
     /*
-     *  The Constructor
+     *  Constructor
      */
     public Entry(K key) {
         this(key,null);
     }
     
     /**
-     *  Main Constructor
+     *  Constructor
      */
     public Entry(K key, M value) {
         this.key = key;

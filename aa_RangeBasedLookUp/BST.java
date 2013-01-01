@@ -4,10 +4,6 @@
  */
 package aa_RangeBasedLookUp;
 
-/**
- *
- * @author shevanid
- */
 public class BST<K extends Comparable<? super K>,M> 
     implements Dictionary<K,M> {
     
