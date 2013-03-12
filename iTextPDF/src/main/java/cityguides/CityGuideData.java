@@ -10,6 +10,8 @@ public class CityGuideData {
 
 	String description;
 	String name;
+	String breadcrumb;
+
 	JSONObject weather;
 	List<String> airportCodes = new ArrayList<String>();
 	JSONArray recommendations;
@@ -51,4 +53,10 @@ public class CityGuideData {
 	public void setRecommendations(JSONArray recommendations) {
 		this.recommendations = recommendations;
 	}	
+	public String getBreadcrumb() {
+		return breadcrumb;
+	}
+	public void setBreadcrumb(String breadcrumb) {
+		this.breadcrumb = breadcrumb;
+	}
 }

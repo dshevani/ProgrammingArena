@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -90,13 +91,15 @@ public class App
 			throws IOException, DocumentException {
 
         PdfContentByte canvas = writer.getDirectContent();
-        canvas.setRGBColorFill(0x00, 0x00, 0x10);
+        //canvas.setRGBColorFill(0x00, 0x00, 0x10);
+        canvas.setRGBColorFill(0x40, 0x40, 0x40);
         
+        //canvas.roundRectangle(0, 807, 595, 35, 3);
         canvas.rectangle(0, 807, 595, 35);
         canvas.fill();
         
-        canvas.rectangle(0, 0, 595, 35);
-        canvas.fill();
+        //canvas.rectangle(0, 0, 595, 35);
+        //canvas.fill();
         
         Image img = Image.getInstance("src/main/resources/travel-us-big.gif");
         img.setAbsolutePosition(10, 810);
@@ -176,37 +179,19 @@ public class App
 		return json_response;
 	}
 	
-	private static void decoratePage(CityGuideMainImage image,
-			CityGuideData data, Document document, PdfWriter writer) 
-			throws IOException, DocumentException {
-		
-		PdfContentByte canvas = writer.getDirectContent();
-		Image img = Image.getInstance("src/main/resources/black_gradient.png");
-		img.setAbsolutePosition(405, 511);
-		img.scaleAbsoluteWidth(160);
-		img.scaleAbsoluteHeight(281);
-		img.setTransparency(new int[]{ 0xF0, 0xFF });
-        canvas.addImage(img);
-        
-        Chunk cityname = new Chunk(data.getName(), CityGuideFonts.BIGWHITE);
-        Paragraph paragraph = new Paragraph();
-        paragraph.setLeading(12);
-        paragraph.add(cityname);
-        ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, paragraph, 410, 540, 0);
-		
-	}
-
 	private static String generateValidHTML(CityGuideMainImage image, CityGuideData data) {
 		StringBuffer corrected = new StringBuffer();
 		corrected.append("<html xml:space=\"preserve\" xmlns=\"http://www.w3.org/1999/xhtml\">");
 		corrected.append("<head><style>h1 {bottom:0; color:white; display:inline-block; vertical-align: top; text-align:center; position:absolute;}</style></head>");
 		corrected.append("<body>");
 		if (image != null) {
-			corrected.append("<div style=\"width:710px\"><div style=\"width:500px; float:left\"><img height=\"375px\" width=\"500px\" src=\"" + image.getImageURL() 
-					+ "\"></img></div>" 
-					//+ "<div style=\"width:210px; height:375px; float:left; background-color:black\"><h1>" 
-					//+ data.getName() +"</h1></div>"
-					+ "</div>");
+			corrected.append("<div style=\"width:710px\">");
+			corrected.append("<div style=\"width:500px; float:left\"><img height=\"375px\" width=\"500px\" src=\"" + image.getImageURL() 
+						+ "\"></img></div>"
+						//+ "<div style=\"width:210px; height:375px; float:left; background-color:black\"><h1>" 
+						//+ data.getName() +"</h1></div>";
+					);
+			corrected.append("</div>");
 		} else {
 			
 		}
@@ -223,13 +208,74 @@ public class App
 			}
 			if (flag_pExists == false) {
 				corrected.append("<p align=\"justify\">");
-				corrected.append(data.getDescription().replaceAll("&", "& \u00a0"));
+				String description = data.getDescription().replaceAll("<.*?>", "");
+				corrected.append(description.replaceAll("&", "& \u00a0"));
 				corrected.append("</p>");
 			}
 			corrected.append("</div>");
 		}
 		corrected.append("</body></html>");
 		return corrected.toString();
+	}
+	
+	private static void decoratePage(CityGuideMainImage image,
+			CityGuideData data, Document document, PdfWriter writer) 
+			throws IOException, DocumentException {
+		
+		PdfContentByte canvas = writer.getDirectContent();
+		
+		//Image img = Image.getInstance("src/main/resources/black_gradient.png");
+		//img.setAbsolutePosition(405, 511);
+		//img.scaleAbsoluteWidth(160);
+		//img.scaleAbsoluteHeight(281);
+		//img.setTransparency(new int[]{ 0xF0, 0xFF });
+        //canvas.addImage(img);
+		
+        //canvas.setRGBColorFill(0x00, 0x00, 0x10);
+        canvas.setRGBColorFill(0x40, 0x40, 0x40);
+        canvas.roundRectangle(26, 507, 545, 289, 6);
+        canvas.setLineWidth(3);
+        canvas.fillStroke();
+        
+        if (image.getImageURL() != null && image.getImageOwnerName() != null) {
+        	Chunk imageowner = new Chunk(image.getImageOwnerName() + " - Flickr", CityGuideFonts.VERYSMALLWHITE);
+        	ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(imageowner), 330, 520, 0);
+        }
+        
+        Chunk cityname = new Chunk(data.getName(), CityGuideFonts.BIGWHITE);
+        Paragraph paragraph = new Paragraph();
+        paragraph.setLeading(12);
+        paragraph.add(cityname);
+        int left_align = 410;
+        if (data.getName().length() < 10) {
+        	left_align += 15;
+        }
+        ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, paragraph, left_align, 530, 0);
+		
+        List<String> codes = data.getAirportCodes();
+        if (!codes.isEmpty()) {
+        	Paragraph airport = new Paragraph();
+        	airport.setFont(CityGuideFonts.AIRPORTMEDIUM);
+        	airport.setLeading(10);
+        	airport.add(new Chunk("[ "));
+        	boolean startFlag = true;
+        	if (codes.size() < 4) {
+        		airport.add(new Chunk("Airport Code: "));
+        	} else {
+        		airport.setFont(CityGuideFonts.AIRPORTSMALL);
+        	}
+        	for (int j=0; j<codes.size(); j++) {
+        		if (!startFlag) {
+        			airport.add(new Chunk(", "));
+        		} else {
+        			startFlag = false;
+        		}
+        		airport.add(new Chunk(codes.get(j)));
+        	}
+        	airport.add(new Chunk(" ]"));
+        	ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, airport, 415, 520, 0);
+        }
+        
 	}
 	
 	public static void addRandomContent(Document document, PdfWriter writer) 
@@ -241,9 +287,9 @@ public class App
 	
 	public static void main(String[] args) {
 		try {
-			//generatePDF("191501822");
-			//generatePDF("191501629");
-			//generatePDF("191501793");
+			generatePDF("191501822");
+			generatePDF("191501629");
+			generatePDF("191501793");
 			generatePDF("191501853");
 			
 		}
